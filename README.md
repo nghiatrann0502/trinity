@@ -18,6 +18,7 @@ In my device (M4Pro, 48GB ram):
 - Max response time ~ 11ms
 - Requests per second:    10716.34 [#/sec] (mean)
 
+I'm using POST here because i want use ab test. It only support GET and POST method. Recommend use PATCH or PUT here
 ``` bash
 ab -n 100000 -c 50 -p <(echo '{"action": "like", "value": 1}') -T "application/json" http://localhost:5002/v1/videos/1/score
 ```

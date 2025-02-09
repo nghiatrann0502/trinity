@@ -25,6 +25,7 @@ func InitGinRouter(handler ginhttp.GinHandler) *gin.Engine {
 	// TODO: Add more routes here
 	v1 := router.Group("/v1")
 	{
+		// I'm using POST here because i want use ab test. It only support GET and POST method. Recommend use PATCH or PUT here
 		v1.POST("/videos/:id/score", handler.UpdateVideoScore())
 		v1.GET("/videos/ranked", handler.GetTopRanked())
 	}
