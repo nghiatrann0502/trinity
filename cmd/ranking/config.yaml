@@ -1,0 +1,25 @@
+app:
+  name: "video-ranking-service"
+  version: "0.0.1"
+  production: false
+
+http:
+  host: "0.0.0.0"
+  port: 5002
+
+videogrpc:
+  host: "localhost"
+  port: 50051
+
+db:
+  host: localhost
+  port: 3306
+  database: trinity
+  username: nghiatrann0502
+  password: nghiatrann0502
+
+redis:
+  host: localhost
+  port: 6379
+  database: 0
+  password: nghiatrann0502

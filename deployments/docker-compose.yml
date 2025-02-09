@@ -1,0 +1,55 @@
+services:
+  redis:
+    image: bitnami/redis:7.4.2
+    restart: unless-stopped
+    profiles:
+      - default
+      - core
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data:/bitnami/redis/data
+    networks:
+      - trinity
+    environment:
+      REDIS_PASSWORD: nghiatrann0502
+
+  mysql:
+    image: mysql:8
+    restart: unless-stopped
+    profiles:
+      - default
+      - core
+    environment:
+      MYSQL_DATABASE: trinity
+      MYSQL_USER: nghiatrann0502
+      MYSQL_PASSWORD: nghiatrann0502
+      MYSQL_ROOT_PASSWORD: nghiatrann0502
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "nghiatrann0502",
+          "--password=nghiatrann0502",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      - trinity
+
+networks:
+  trinity:
+volumes:
+  redis_data:
+  mysql_data:

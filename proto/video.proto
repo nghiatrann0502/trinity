@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option go_package = "github.com/nghiatrann0502/proto";
+
+message VideoDetail{
+  int64 id = 1;
+  string title = 2;
+  string description = 3;
+  string url = 4;
+  string thumbnail = 5;
+  int64 duration = 6;
+}
+
+message VideoList{
+  repeated VideoDetail videos = 1;
+}
+
+message GetByIDsRequest{
+  repeated int64 ids = 1;
+}
+
+message VideoRequest{
+  int64 id = 1;
+}
+
+message VideoResponse{
+  VideoDetail video = 1;
+}
+
+service VideoService{
+  rpc GetByIDs(GetByIDsRequest) returns (VideoList);
+  rpc GetByID(VideoRequest) returns (VideoResponse);
+}

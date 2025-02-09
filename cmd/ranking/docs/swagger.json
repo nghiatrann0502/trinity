@@ -1,0 +1,150 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a real-time ranking service API using Gin and Hexagonal Architecture.",
+        "title": "Video Ranking API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:5002",
+    "basePath": "/",
+    "paths": {
+        "/v1/videos/ranked": {
+            "get": {
+                "description": "Get top ranked videos",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "videos"
+                ],
+                "summary": "Get top ranked videos",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit number",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/videos/{id}/score": {
+            "post": {
+                "description": "Update the score of a video based on the given ID and action",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "videos"
+                ],
+                "summary": "Update video score",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Video ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Video Ranking Update",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/VideoRankingUpdateBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/HTTPError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "HTTPError": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "Paging": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "page": {
+                    "type": "integer"
+                }
+            }
+        },
+        "Response": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "paging": {
+                    "$ref": "#/definitions/Paging"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "VideoRankingUpdateBody": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "description": "view, like, comment, share, watch",
+                    "type": "string",
+                    "example": "view"
+                },
+                "value": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        }
+    }
+}

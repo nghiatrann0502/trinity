@@ -1,0 +1,99 @@
+basePath: /
+definitions:
+  HTTPError:
+    properties:
+      error:
+        type: string
+      type:
+        type: string
+    type: object
+  Paging:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+    type: object
+  Response:
+    properties:
+      data: {}
+      paging:
+        $ref: '#/definitions/Paging'
+      success:
+        type: boolean
+    type: object
+  VideoRankingUpdateBody:
+    properties:
+      action:
+        description: view, like, comment, share, watch
+        example: view
+        type: string
+      value:
+        example: 1
+        type: integer
+    type: object
+host: localhost:5002
+info:
+  contact: {}
+  description: This is a real-time ranking service API using Gin and Hexagonal Architecture.
+  title: Video Ranking API
+  version: "1.0"
+paths:
+  /v1/videos/{id}/score:
+    post:
+      consumes:
+      - application/json
+      description: Update the score of a video based on the given ID and action
+      parameters:
+      - description: Video ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Video Ranking Update
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/VideoRankingUpdateBody'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/HTTPError'
+      summary: Update video score
+      tags:
+      - videos
+  /v1/videos/ranked:
+    get:
+      consumes:
+      - application/json
+      description: Get top ranked videos
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Limit number
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Response'
+      summary: Get top ranked videos
+      tags:
+      - videos
+swagger: "2.0"
