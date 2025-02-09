@@ -9,7 +9,7 @@ type DBEngine interface {
 	Health() (bool, map[string]string)
 	GetDB() *sql.DB
 	Close()
-	Migrate() error
+	Migrate(dir string) error
 }
 
 type BaseSql struct {

@@ -5,8 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"os"
-	"path/filepath"
 	"strconv"
 	"time"
 
@@ -97,16 +95,11 @@ func (s *mysqlDB) Close() {
 	}
 }
 
-func (s *mysqlDB) Migrate() error {
+func (s *mysqlDB) Migrate(dir string) error {
 	driver, err := mysql.WithInstance(s.db, &mysql.Config{})
 	if err != nil {
 		return err
 	}
-
-	cur, _ := os.Getwd()
-
-	dir := filepath.Dir(cur + "../../../")
-
 	m, err := migrate.NewWithDatabaseInstance(
 		fmt.Sprintf("file://%s/%s", dir, "db/migrations"),
 		"mysql",

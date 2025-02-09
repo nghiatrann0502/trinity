@@ -1,0 +1,22 @@
+FROM golang:1.23.6-alpine AS builder
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+
+RUN go mod download
+
+COPY . .
+#  -a -installsuffix cgo 
+
+RUN CGO_ENABLED=0 GOOS=linux go build -o app ./cmd/video
+
+FROM alpine:3.14
+
+WORKDIR /app/
+
+COPY --from=builder /app/app .
+
+COPY --from=builder /app/cmd/video/config.yaml config.yaml
+
+ENTRYPOINT ["./app"]

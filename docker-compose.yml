@@ -1,0 +1,102 @@
+services:
+  redis:
+    image: bitnami/redis:7.4.2
+    restart: unless-stopped
+    profiles:
+      - default
+      - core
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data:/bitnami/redis/data
+    networks:
+      - trinity
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    environment:
+      REDIS_PASSWORD: nghiatrann0502
+
+  mysql:
+    image: mysql:8
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: trinity
+      MYSQL_USER: nghiatrann0502
+      MYSQL_PASSWORD: nghiatrann0502
+      MYSQL_ROOT_PASSWORD: nghiatrann0502
+    profiles:
+      - default
+      - core
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "nghiatrann0502",
+          "--password=nghiatrann0502",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      - trinity
+
+  video-ranking-service:
+    build:
+      dockerfile: dockerfile.ranking
+      context: .
+    profiles:
+      - default
+    networks:
+      - trinity
+    ports:
+      - 5002:5002
+    depends_on:
+      mysql:
+        condition: service_healthy
+        restart: true
+      redis: 
+        condition: service_healthy
+        restart: true
+    environment:
+      APP_DB_HOST: mysql
+      APP_REDIS_HOST: redis
+      APP_APP_PRODUCTION: true
+      APP_VIDEOGRPC_HOST: video-service
+
+  video-service:
+    build:
+      dockerfile: dockerfile.video
+      context: .
+    networks:
+      - trinity
+    profiles:
+      - default
+    depends_on:
+      mysql:
+        condition: service_healthy
+        restart: true
+      redis: 
+        condition: service_healthy
+        restart: true
+    environment:
+      APP_REDIS_HOST: redis
+      APP_APP_PRODUCTION: true
+
+networks:
+  trinity:
+volumes:
+  redis_data:
+  mysql_data:

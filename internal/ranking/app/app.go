@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/nghiatrann0502/trinity/internal/ranking/adapters/ginhttp"
 	"github.com/nghiatrann0502/trinity/internal/ranking/adapters/repositories"
@@ -39,7 +41,25 @@ func NewApp(cfg *config.Config, log logger.Logger) (*app, func(), error) {
 		log.Info("connected to mysql", nil)
 	}
 
-	if err := db.Migrate(); err != nil {
+	cur, _ := os.Getwd()
+
+	isDev := cfg.App.Production == false
+	var dir string
+	dir = filepath.Dir(cur + "/")
+	if isDev {
+		dir = filepath.Dir(cur + "../../../")
+	}
+
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for _, e := range entries {
+		fmt.Println(e.Name())
+	}
+
+	if err := db.Migrate(dir); err != nil {
 		log.Fatal("cannot migrate database", err, nil)
 	}
 
